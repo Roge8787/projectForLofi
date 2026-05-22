@@ -6,7 +6,7 @@ By combining **WebAssembly (PyScript/Pyodide)** for algorithmic composition and 
 
 ## 🚀 Live Demo
 Experience the real-time generative engine directly on GitHub Pages:
-👉 **[👉 這裡貼上你的 GitHub Pages 網址，例如: https://你的帳號.github.io/ultimate_lo_fi/]**
+**[https://github.com/Roge8787/projectForLofi]**
 
 ---
 
