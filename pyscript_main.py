@@ -99,7 +99,7 @@ is_playing = False
 active_source = None
 active_gain = None  
 playback_start_time = 0.0 
-current_mode_text = "MIDNIGHT" # 🌟 新增：系統現在會記住目前的文字狀態
+current_mode_text = "MIDNIGHT" # 系統現在會記住目前的文字狀態
 
 def init_audio():
     global audio_ctx
@@ -209,6 +209,17 @@ def toggle_play(event):
     if not is_playing:
         audio_ctx.resume()
         start_playback()
+
+        if current_mode_text == "Midnight":
+            document.getElementById("audio-midnight").play()
+            document.getElementById("audio-midnight").volume = 1.0
+        elif current_mode_text == "Rainy":
+            document.getElementById("audio-rainy").play()
+            document.getElementById("audio-rainy").volume = 0.5
+        elif current_mode_text == "Cafe":
+            document.getElementById("audio-cafe").play()
+            document.getElementById("audio-cafe").volume = 1.0
+
         btn.innerText = "STOP"
         btn.classList.add("bg-red-500", "text-white")
         btn.classList.remove("bg-white", "text-gray-900")
@@ -222,34 +233,62 @@ def toggle_play(event):
         btn.innerText = "START"
         btn.classList.remove("bg-red-500", "text-white")
         btn.classList.add("bg-white", "text-gray-900")
+
+        document.getElementById("audio-midnight").pause()
+        document.getElementById("audio-rainy").pause()
+        document.getElementById("audio-cafe").pause()
         
     document.querySelector("#chord-display").innerText = current_mode_text
 
 @when("click", "#btn-midnight")
 def set_midnight(event):
     global current_mode_text
-    current_mode_text = "Midnight"  # 🌟 改回溫和的首字母大寫
-    engine.current_cfg = {"filter": 400, "noise": 0.002}
+    current_mode_text = "Midnight" 
+    engine.current_cfg = {"filter": 350, "noise": 0.001}
     update_ui_selection("#btn-midnight")
     document.querySelector("#chord-display").innerText = current_mode_text
+    document.getElementById("main-bg").style.backgroundImage = "url('./assets/night.gif')"
+    if is_playing:
+        document.getElementById("audio-midnight").play()
+        document.getElementById("audio-midnight").volume = 1.0
+        document.getElementById("audio-rainy").pause()
+        document.getElementById("audio-cafe").pause()
+        queue_next_mode()
+
     if is_playing: queue_next_mode()
 
 @when("click", "#btn-rainy")
 def set_rainy(event):
     global current_mode_text
-    current_mode_text = "Rainy"  # 🌟 改回溫和的首字母大寫
-    engine.current_cfg = {"filter": 1200, "noise": 0.02}
+    current_mode_text = "Rainy" 
+    engine.current_cfg = {"filter": 800, "noise": 0.08}
     update_ui_selection("#btn-rainy")
     document.querySelector("#chord-display").innerText = current_mode_text
+    document.getElementById("main-bg").style.backgroundImage = "url('./assets/rainy.gif')"
+    if is_playing:
+        document.getElementById("audio-midnight").pause()
+        document.getElementById("audio-rainy").play()
+        document.getElementById("audio-rainy").volume = 0.5
+        document.getElementById("audio-cafe").pause()
+        queue_next_mode()
+
     if is_playing: queue_next_mode()
 
 @when("click", "#btn-cafe")
 def set_cafe(event):
     global current_mode_text
-    current_mode_text = "Cafe"  # 🌟 改回溫和的首字母大寫
-    engine.current_cfg = {"filter": 3000, "noise": 0.005}
+    current_mode_text = "Cafe"  
+    engine.current_cfg = {"filter": 6000, "noise": 0.008}
     update_ui_selection("#btn-cafe")
     document.querySelector("#chord-display").innerText = current_mode_text
+    document.getElementById("main-bg").style.backgroundImage = "url('./assets/cafe2.gif')"
+    if is_playing:
+        document.getElementById("audio-midnight").pause()
+        document.getElementById("audio-rainy").pause()
+        document.getElementById("audio-cafe").play()
+        document.getElementById("audio-cafe").volume = 1.0
+    queue_next_mode()
+
     if is_playing: queue_next_mode()
 
 def initialize_system():
@@ -259,7 +298,7 @@ def initialize_system():
         play_btn.disabled = False
         play_btn.classList.remove("opacity-50", "cursor-not-allowed")
         
-        # 🌟 初始化時的文字與內部變數也統一改回
+        # 初始化時的文字與內部變數也統一改回
         global current_mode_text
         current_mode_text = "Midnight"
         document.querySelector("#chord-display").innerText = current_mode_text 
